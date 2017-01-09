@@ -1,14 +1,17 @@
 package com.rfaguiar.pedidovenda.controller;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
 
-@ManagedBean
+@Named
 @RequestScoped
-public class CadastroUsuarioBean {
+public class CadastroUsuarioBean implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 	
 	private List<Integer> grupos;
 
