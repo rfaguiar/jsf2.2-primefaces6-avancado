@@ -1,6 +1,7 @@
 package com.rfaguiar.pedidovenda.controller;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.view.ViewScoped;
@@ -10,6 +11,8 @@ import javax.inject.Named;
 import com.rfaguiar.pedidovenda.model.Categoria;
 import com.rfaguiar.pedidovenda.model.Produto;
 import com.rfaguiar.pedidovenda.repository.Categorias;
+import com.rfaguiar.pedidovenda.service.CadastroProdutoService;
+import com.rfaguiar.pedidovenda.util.jsf.FacesUtil;
 
 @Named
 @ViewScoped
@@ -20,19 +23,41 @@ public class CadastroProdutoBean implements Serializable {
 	@Inject
 	private Categorias categorias;
 	
+	@Inject
+	private CadastroProdutoService cadastroProdutoService;
+	
 	private Produto produto;
 	
-	private List<Categoria> categoriasRaizes;
+	private Categoria categoriaPai;
 	
-	public CadastroProdutoBean() {
-		this.produto = new Produto();
+	private List<Categoria> categoriasRaizes;
+	private List<Categoria> subCategoriasRaizes;
+	
+	public CadastroProdutoBean() {		
+		this.limpar();
 	}
 	
 	public void inicializar(){		
-		this.categoriasRaizes = this.categorias.raizes();
+		if(FacesUtil.isNotPostBack()){
+			this.categoriasRaizes = this.categorias.raizes();
+			
+		}
+	}
+	
+	public void carregarSubCategoria(){
+		this.subCategoriasRaizes = this.categorias.subCategoriasDe(this.categoriaPai);
 	}
 	
 	public void salvar(){
+		this.produto = this.cadastroProdutoService.salvar(this.produto);		
+		this.limpar();		
+		FacesUtil.addInfoMessage("Produto salvo com sucesso");
+	}
+
+	private void limpar() {
+		this.produto = new Produto();
+		this.categoriaPai = null;
+		this.subCategoriasRaizes = new ArrayList<Categoria>();
 		
 	}
 
@@ -50,6 +75,22 @@ public class CadastroProdutoBean implements Serializable {
 
 	public void setCategoriasRaizes(List<Categoria> categoriasRaizes) {
 		this.categoriasRaizes = categoriasRaizes;
+	}
+
+	public Categoria getCategoriaPai() {
+		return categoriaPai;
+	}
+
+	public void setCategoriaPai(Categoria categoriaPai) {
+		this.categoriaPai = categoriaPai;
+	}
+
+	public List<Categoria> getSubCategoriasRaizes() {
+		return subCategoriasRaizes;
+	}
+
+	public void setSubCategoriasRaizes(List<Categoria> subCategoriasRaizes) {
+		this.subCategoriasRaizes = subCategoriasRaizes;
 	}
 	
 }
